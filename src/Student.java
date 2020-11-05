@@ -1,11 +1,11 @@
 import java.util.HashMap;
 
-public class Student {
+public class Student implements Comparable<Student>{
     private String firstName, lastName;
     private int studentNum;
     private HashMap<String, Integer> courses;
 
-    public Student(String firstName, String lastName, int studentNum) {
+    public Student(int studentNum, String firstName, String lastName) {
         setFirstName(firstName);
         setLastName(lastName);
         setStudentNum(studentNum);
@@ -39,14 +39,44 @@ public class Student {
     }
 
     public void setStudentNum(int studentNum) {
-        this.studentNum = studentNum;
+        if (studentNum > 0)
+            this.studentNum = studentNum;
+        else
+            throw new IllegalArgumentException("student number must be greater than 0");
     }
 
     public HashMap<String, Integer> getCourses() {
         return courses;
     }
 
-    public void setCourses(HashMap<String, Integer> courses) {
-        this.courses = courses;
+    public void addCourse(String courseCode, Integer grade){
+        if (courseCode.matches("[A-Z]{4}\\s?[0-9]{4}") && grade>=0 && grade<=100)
+            courses.put(courseCode, grade);
+        else
+            throw new IllegalArgumentException("course code OR grade invalid");
+    }
+
+    public double getAvgGrade()
+    {
+        if (courses.size() == 0)
+            return 0;
+
+        double sum = 0;
+
+        for (String courseCode:courses.keySet())
+            sum += courses.get(courseCode);
+
+        return sum/courses.size();
+    }
+
+    public String toString()
+    {
+        return String.format("%d, %s %s avg Grade: %.1f%%", studentNum, firstName, lastName,
+                getAvgGrade());
+    }
+
+    @Override
+    public int compareTo(Student otherStudent) {
+        return Integer.compare(this.studentNum, otherStudent.studentNum);
     }
 }
